@@ -328,19 +328,23 @@
           </div>
         </div>
 
-        <!-- new ticket form (opens mail client) -->
+        <!-- new ticket form: sent to Shore's inbox via FormSubmit (formsubmit.co) -->
         <form id="ticketForm" class="reveal border-[3px] border-ink bg-white shadow-hard-lg">
           <div class="flex items-center justify-between border-b-[3px] border-ink bg-mint px-5 py-3 font-mono text-sm font-bold uppercase"><span>+ New ticket</span><span>SK-???</span></div>
           <div class="space-y-5 p-6">
             <label class="block"><span class="font-mono text-xs font-bold uppercase">Your name</span>
-              <input name="name" required class="mt-1.5 w-full border-[3px] border-ink bg-cream px-3 py-2.5 font-medium outline-none transition focus:bg-white focus:shadow-hard-sm" placeholder="Ada Lovelace" /></label>
+              <input id="tk-name" name="name" required autocomplete="name" class="mt-1.5 w-full border-[3px] border-ink bg-cream px-3 py-2.5 font-medium outline-none transition focus:bg-white focus:shadow-hard-sm" placeholder="Ada Lovelace" /></label>
+            <label class="block"><span class="font-mono text-xs font-bold uppercase">Your email</span>
+              <input id="tk-email" name="email" type="email" required autocomplete="email" class="mt-1.5 w-full border-[3px] border-ink bg-cream px-3 py-2.5 font-medium outline-none transition focus:bg-white focus:shadow-hard-sm" placeholder="ada@company.com" /></label>
             <label class="block"><span class="font-mono text-xs font-bold uppercase">Ticket type</span>
-              <select name="type" class="mt-1.5 w-full border-[3px] border-ink bg-cream px-3 py-2.5 font-medium outline-none focus:bg-white">
+              <select id="tk-type" name="type" class="mt-1.5 w-full border-[3px] border-ink bg-cream px-3 py-2.5 font-medium outline-none focus:bg-white">
                 <option>New project</option><option>Full-time role</option><option>Consulting / advice</option><option>Just saying hi 👋</option>
               </select></label>
             <label class="block"><span class="font-mono text-xs font-bold uppercase">Description</span>
-              <textarea name="msg" rows="4" required class="mt-1.5 w-full resize-none border-[3px] border-ink bg-cream px-3 py-2.5 font-medium outline-none transition focus:bg-white focus:shadow-hard-sm" placeholder="What are we building?"></textarea></label>
-            <button class="press w-full border-[3px] border-ink bg-tomato py-3.5 text-lg font-bold text-white shadow-hard">Submit ticket →</button>
+              <textarea id="tk-msg" name="msg" rows="4" required class="mt-1.5 w-full resize-none border-[3px] border-ink bg-cream px-3 py-2.5 font-medium outline-none transition focus:bg-white focus:shadow-hard-sm" placeholder="What are we building?"></textarea></label>
+            <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+            <button id="tk-submit" class="press w-full border-[3px] border-ink bg-tomato py-3.5 text-lg font-bold text-white shadow-hard disabled:cursor-wait disabled:opacity-70">Submit ticket →</button>
+            <p id="tk-status" class="hidden border-[3px] border-ink px-4 py-3 text-sm font-semibold" role="status" aria-live="polite"></p>
             <p class="text-center font-mono text-xs">or email <a href="mailto:shorekakhi@gmail.com" class="font-bold underline decoration-2 underline-offset-2">shorekakhi@gmail.com</a></p>
           </div>
         </form>
@@ -401,12 +405,41 @@
     // card count per column
     document.querySelectorAll('[data-col]').forEach(c => c.querySelector('.cnt').textContent = c.querySelectorAll('.card').length);
 
-    // ticket form -> mailto
-    document.getElementById('ticketForm').addEventListener('submit', e => {
+    // ticket form -> Shore's inbox (FormSubmit sends each ticket to the email in the URL)
+    const ticketForm = document.getElementById('ticketForm');
+    const tkSubmit = document.getElementById('tk-submit'), tkStatus = document.getElementById('tk-status');
+    const showStatus = (ok, text) => {
+      tkStatus.textContent = text;
+      tkStatus.className = 'border-[3px] border-ink px-4 py-3 text-sm font-semibold ' + (ok ? 'bg-mint' : 'bg-lemon');
+    };
+    ticketForm.addEventListener('submit', async e => {
       e.preventDefault();
-      const f = new FormData(e.target);
-      const subject = encodeURIComponent(`[${f.get('type')}] from ${f.get('name')}`);
-      location.href = `mailto:shorekakhi@gmail.com?subject=${subject}&body=${encodeURIComponent(f.get('msg'))}`;
+      const f = new FormData(ticketForm);
+      if (f.get('_honey')) return;
+      tkSubmit.disabled = true; tkSubmit.textContent = 'Sending…';
+      try {
+        const res = await fetch('https://formsubmit.co/ajax/shorekakhi@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            _subject: `New ticket: ${f.get('type')} from ${f.get('name')}`,
+            _template: 'table',
+            _replyto: f.get('email'),
+            name: f.get('name'),
+            email: f.get('email'),
+            type: f.get('type'),
+            message: f.get('msg'),
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || String(data.success) === 'false') throw new Error(data.message || res.status);
+        ticketForm.reset();
+        showStatus(true, 'Ticket sent ✓ Thanks! I\'ll get back to you within 24 hours.');
+      } catch (err) {
+        showStatus(false, 'Couldn\'t send the ticket right now. Please email me at shorekakhi@gmail.com.');
+      } finally {
+        tkSubmit.disabled = false; tkSubmit.textContent = 'Submit ticket →';
+      }
     });
 
     // award board lightbox

@@ -30,6 +30,7 @@
       background-image: radial-gradient(#11111122 1px, transparent 1px);
       background-size: 22px 22px;
     }
+    [hidden] { display: none !important; }
     .press { transition: transform .15s ease, box-shadow .15s ease; }
     .press:hover { transform: translate(-3px, -3px); box-shadow: 8px 8px 0 0 #111; }
     .press:active { transform: translate(3px, 3px); box-shadow: 0 0 0 0 #111; }
@@ -210,6 +211,21 @@
             <div class="flex items-center justify-between font-mono text-sm font-bold uppercase"><span class="flex items-center gap-2"><span class="h-3 w-3 border-2 border-ink bg-mint"></span>Shipped</span><span class="cnt border-2 border-ink bg-white px-2">0</span></div>
 
             <article draggable="true" class="card press cursor-grab border-[3px] border-ink bg-white shadow-hard active:cursor-grabbing">
+              <div class="relative h-44 overflow-hidden border-b-[3px] border-ink bg-ink">
+                <img src="images/mazda-thats-it-thumb.jpg" alt="Still from Mazda's That's It campaign film with sumo legend Levan Gorgadze" width="800" height="400" class="h-full w-full object-cover" draggable="false" />
+                <span class="absolute bottom-3 left-3 rotate-[-4deg] border-2 border-ink bg-[#d9894f] px-2 py-0.5 font-mono text-[10px] font-extrabold uppercase text-ink shadow-hard-sm">🏆 Bronze · KIAF</span>
+                <span class="absolute right-3 top-3 border-2 border-ink bg-white px-1.5 font-mono text-[10px] font-bold">AUTOMOTIVE</span>
+              </div>
+              <div class="p-4">
+                <p class="font-mono text-[11px] font-bold text-ink/50">SK-140 · Mazda Georgia</p>
+                <h3 class="mt-1 text-xl font-bold">Mazda CX-60 PHEV: "That's It"</h3>
+                <p class="mt-1.5 text-sm">Launch campaign for the plug-in hybrid CX-60 in Georgia, starring sumo legend Levan Gorgadze (Tochinoshin). Won Bronze at the Kyiv International Advertising Festival.</p>
+                <div class="mt-3 flex flex-wrap gap-1.5 font-mono text-[10px] font-bold uppercase"><span class="border-2 border-ink bg-mint px-1.5">1.25M unique viewers</span><span class="border-2 border-ink bg-lemon px-1.5">6.16M views</span><span class="border-2 border-ink bg-lilac px-1.5">+24% leads YoY</span><span class="border-2 border-ink bg-white px-1.5">98.3% new reach</span></div>
+                <button type="button" data-open-board class="mt-4 w-full border-[3px] border-ink bg-ink py-2 font-mono text-xs font-bold uppercase text-cream transition hover:bg-tomato">View award board ↗</button>
+              </div>
+            </article>
+
+            <article draggable="true" class="card press cursor-grab border-[3px] border-ink bg-white shadow-hard active:cursor-grabbing">
               <div class="relative h-36 overflow-hidden border-b-[3px] border-ink bg-royal p-4">
                 <div class="flex h-full items-end gap-2">
                   <span class="w-full border-2 border-ink bg-lemon" style="height:35%"></span><span class="w-full border-2 border-ink bg-lemon" style="height:55%"></span><span class="w-full border-2 border-ink bg-lemon" style="height:70%"></span><span class="w-full border-2 border-ink bg-mint" style="height:95%"></span>
@@ -343,6 +359,14 @@
     </section>
   </main>
 
+  <!-- award board lightbox -->
+  <div id="boardBox" hidden class="fixed inset-0 z-[100] grid place-items-center bg-ink/80 p-4" role="dialog" aria-modal="true" aria-label="Mazda That's It award board">
+    <div class="relative max-h-full w-full max-w-3xl overflow-auto border-[3px] border-ink bg-white shadow-hard-lg">
+      <div class="flex items-center justify-between border-b-[3px] border-ink bg-[#d9894f] px-4 py-2 font-mono text-xs font-bold uppercase"><span>KIAF Bronze · Mazda "That's It"</span><button type="button" data-close-board class="border-2 border-ink bg-white px-2 py-0.5" aria-label="Close">✕</button></div>
+      <img src="images/mazda-thats-it.jpg" alt="KIAF award board for Mazda's That's It campaign: brief, insight, context, idea and impact results" width="1200" height="1200" class="block h-auto w-full" />
+    </div>
+  </div>
+
   <footer class="border-t-[3px] border-ink bg-ink text-cream">
     <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 font-mono text-xs font-bold uppercase sm:flex-row">
       <p>© <span id="year"></span> Shore Kakhidze</p>
@@ -409,6 +433,12 @@
       const subject = encodeURIComponent(`[${f.get('type')}] from ${f.get('name')}`);
       location.href = `mailto:shorekakhi@gmail.com?subject=${subject}&body=${encodeURIComponent(f.get('msg'))}`;
     });
+
+    // award board lightbox
+    const boardBox = document.getElementById('boardBox');
+    document.querySelectorAll('[data-open-board]').forEach(b => b.addEventListener('click', () => { boardBox.hidden = false; }));
+    boardBox.addEventListener('click', e => { if (e.target === boardBox || e.target.closest('[data-close-board]')) boardBox.hidden = true; });
+    addEventListener('keydown', e => { if (e.key === 'Escape') boardBox.hidden = true; });
 
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>

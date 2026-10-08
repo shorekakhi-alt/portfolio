@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shore Kakhidze — Project Manager</title>
+  <meta name="description" content="Shore Kakhidze — Project Manager who turns messy ideas into projects that ship." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            hand: ['"Gochi Hand"', 'cursive'],
+            pixel: ['Silkscreen', 'monospace'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            ink: '#1c1a19',
+            paper: '#f7f6f2',
+            sun: '#f2c23e',
+            tomato: '#ee6a3a',
+            leaf: '#1fa463',
+            bubble: '#f2508f',
+            cobalt: '#2a4fd6',
+            mint: '#a8e0c2',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-padding-top: 80px; }
+    body {
+      background-color: #8d8d8d;
+      background-image:
+        linear-gradient(rgba(255,255,255,.55) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255,255,255,.55) 2px, transparent 2px);
+      background-size: 44px 44px;
+    }
+    .sheet {
+      background-color: #f7f6f2;
+      background-image: repeating-linear-gradient(to bottom, transparent 0 31px, #e3e1da 31px 32px);
+    }
+    /* zig-zag edges like torn sticker tags */
+    .zig {
+      --s: 7px;
+      -webkit-mask:
+        conic-gradient(from -135deg at right, #0000, #000 1deg 89deg, #0000 90deg) right/51% calc(2*var(--s)) repeat-y,
+        conic-gradient(from 45deg at left, #0000, #000 1deg 89deg, #0000 90deg) left/51% calc(2*var(--s)) repeat-y;
+              mask:
+        conic-gradient(from -135deg at right, #0000, #000 1deg 89deg, #0000 90deg) right/51% calc(2*var(--s)) repeat-y,
+        conic-gradient(from 45deg at left, #0000, #000 1deg 89deg, #0000 90deg) left/51% calc(2*var(--s)) repeat-y;
+    }
+    .tape { background: rgba(170, 190, 235, .65); }
+    .tape-y { background: rgba(240, 215, 140, .7); }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+    .reveal.in { opacity: 1; transform: none; }
+    .wiggle:hover { animation: wiggle .5s ease; }
+    @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-4deg)} 75%{transform:rotate(4deg)} }
+    .float { animation: float 5s ease-in-out infinite; }
+    .float-2 { animation: float 6s ease-in-out -2s infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-10px) rotate(3deg)} }
+    .spin-slow { animation: spin 10s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .stack-card { position: sticky; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+
+  <div class="sheet mx-auto max-w-6xl min-h-screen shadow-2xl sm:my-6 sm:rounded-sm">
+
+    <!-- ============ NAVBAR ============ -->
+    <header id="nav" class="sticky top-0 z-50 border-b border-ink/10 bg-paper/90 backdrop-blur transition-shadow">
+      <nav class="flex h-14 items-center justify-between px-4 sm:px-6">
+        <div class="flex items-center gap-1">
+          <a href="#home" class="mr-2 grid h-7 w-7 place-items-center rounded-full bg-bubble text-xs font-bold text-white wiggle" aria-label="Home">☺</a>
+          <ul class="hidden items-center font-mono text-[11px] font-bold uppercase tracking-wider md:flex" id="navlinks">
+            <li><a href="#home" data-sec="home" class="navlink flex items-center gap-1.5 px-3 py-4 transition-colors hover:bg-sun/60">★ Home</a></li>
+            <li><a href="#about" data-sec="about" class="navlink flex items-center gap-1.5 px-3 py-4 transition-colors hover:bg-sun/60">● About</a></li>
+            <li><a href="#work" data-sec="work" class="navlink flex items-center gap-1.5 px-3 py-4 transition-colors hover:bg-sun/60">▦ Projects</a></li>
+            <li><a href="#contact" data-sec="contact" class="navlink flex items-center gap-1.5 px-3 py-4 transition-colors hover:bg-sun/60">◆ Contact</a></li>
+          </ul>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="#" aria-label="LinkedIn" class="grid h-7 w-7 place-items-center rounded-full bg-sun ring-1 ring-ink/20 transition hover:-translate-y-0.5">
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.7 4.8 6.1V21h-4v-5.5c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21h-4V9Z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="grid h-7 w-7 place-items-center rounded-full bg-bubble text-white ring-1 ring-ink/20 transition hover:-translate-y-0.5">
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          </a>
+          <a href="#" aria-label="TikTok" class="grid h-7 w-7 place-items-center rounded-full bg-leaf text-white ring-1 ring-ink/20 transition hover:-translate-y-0.5">
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 5 5.7V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.3-1.6Z"/></svg>
+          </a>
+          <a href="#contact" class="ml-1 hidden items-center gap-1.5 border-2 border-ink px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider transition hover:bg-ink hover:text-paper sm:flex">♥ Contact</a>
+          <button id="menuBtn" class="ml-1 grid h-8 w-8 place-items-center border-2 border-ink md:hidden" aria-label="Open menu" aria-expanded="false">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+        </div>
+      </nav>
+      <div id="mobileMenu" class="hidden border-t border-ink/10 md:hidden">
+        <ul class="grid grid-cols-2 font-mono text-xs font-bold uppercase tracking-wider">
+          <li><a href="#home" class="mlink block border-b border-r border-ink/10 px-4 py-3">★ Home</a></li>
+          <li><a href="#about" class="mlink block border-b border-ink/10 px-4 py-3">● About</a></li>
+          <li><a href="#work" class="mlink block border-r border-ink/10 px-4 py-3">▦ Projects</a></li>
+          <li><a href="#contact" class="mlink block px-4 py-3">◆ Contact</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- ============ HERO ============ -->
+    <section id="home" class="relative overflow-hidden px-4 pb-16 pt-14 sm:px-6 sm:pt-20">
+      <div class="relative mx-auto flex max-w-3xl flex-col items-center text-center">
+
+        <p class="font-hand text-lg leading-none">my name is</p>
+        <svg class="mb-3 h-2 w-16 text-ink" viewBox="0 0 60 8" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3c15-2 40-2 56 0M8 6c12-1 32-1 44 0"/></svg>
+
+        <div class="relative">
+          <!-- sticky labels -->
+          <span class="absolute -left-10 -top-8 hidden rotate-[-6deg] rounded-full bg-mint px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm ring-1 ring-ink/10 sm:-left-32 sm:block">ships on time</span>
+          <span class="absolute -right-10 -top-8 hidden rotate-[5deg] rounded-full bg-[#f3e3a6] px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm ring-1 ring-ink/10 sm:-right-36 sm:block">herds cats calmly</span>
+
+          <div class="rounded-[3px] border-[2.5px] border-tomato px-5 py-3 sm:px-10 sm:py-4" style="border-radius: 6px 10px 4px 12px / 10px 4px 12px 6px">
+            <h1 class="font-pixel text-6xl font-bold leading-none tracking-tight sm:text-8xl md:text-9xl">SHORE</h1>
+          </div>
+
+          <span class="absolute -bottom-10 -left-6 rotate-[-4deg] bg-sun px-3 py-1.5 font-hand text-base shadow-md sm:-bottom-8 sm:-left-28">Project Manager ↗</span>
+          <span class="absolute -bottom-10 -right-6 rotate-[3deg] bg-mint px-3 py-1.5 font-hand text-base shadow-md sm:-bottom-8 sm:-right-28">↖ Kakhidze</span>
+        </div>
+
+        <p class="mt-14 flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[.18em] sm:mt-8">
+          <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-cobalt opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-cobalt"></span></span>
+          Open to new projects &amp; messy roadmaps
+        </p>
+
+        <h2 class="mt-8 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
+          I turn messy ideas into
+          <span class="inline-grid h-8 w-8 translate-y-1 place-items-center rounded-full border-[3px] border-leaf align-middle sm:h-10 sm:w-10"><span class="h-3 w-3 rounded-full bg-leaf"></span></span><br class="hidden sm:block" />
+          projects that actually ship.
+          <span class="inline-block spin-slow text-bubble">✿</span>
+        </h2>
+        <p class="mt-5 max-w-xl text-base text-ink/70">Roadmaps, rituals and the right conversations — I keep teams aligned, risks small and deadlines boring (in the best way).</p>
+
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <a href="#contact" class="group flex items-center gap-2 bg-ink py-1.5 pl-1.5 pr-4 font-mono text-[11px] font-bold uppercase tracking-wider text-paper shadow-[4px_4px_0_#ee6a3a] transition hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#ee6a3a]">
+            <span class="grid h-6 w-6 place-items-center bg-cobalt transition group-hover:rotate-45">↗</span> Contact me
+          </a>
+          <a href="#work" class="border-2 border-ink px-4 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider transition hover:bg-sun">See projects</a>
+        </div>
+      </div>
+
+      <!-- floating avatars -->
+      <div class="float absolute left-[8%] top-[48%] hidden h-14 w-14 place-items-center rounded-full bg-sun font-pixel text-sm ring-4 ring-tomato lg:grid">PM</div>
+      <div class="float-2 absolute right-[8%] top-[46%] hidden h-14 w-14 place-items-center rounded-full bg-mint text-2xl ring-4 ring-tomato lg:grid">📋</div>
+    </section>
+
+    <svg class="block w-full text-ink/25" viewBox="0 0 1200 40" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 38 Q600 -18 1200 38"/></svg>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="relative px-4 pb-24 pt-6 sm:px-6">
+      <p class="font-hand text-lg sm:ml-12">about me!</p>
+
+      <div class="mt-8 grid items-start gap-10 lg:grid-cols-[200px_1fr_200px]">
+        <!-- polaroid left -->
+        <figure class="reveal relative mx-auto w-44 rotate-[-4deg] bg-white p-2.5 pb-8 shadow-xl transition hover:rotate-0 lg:mt-16">
+          <span class="tape absolute -left-4 -top-2 h-5 w-16 rotate-[-30deg]"></span>
+          <span class="tape-y absolute -right-4 -top-2 h-5 w-16 rotate-[30deg]"></span>
+          <div class="grid aspect-[4/5] place-items-center bg-gradient-to-br from-sky-200 via-slate-300 to-slate-500">
+            <span class="font-pixel text-4xl text-white drop-shadow">SK</span>
+          </div>
+          <figcaption class="mt-2 text-center font-hand text-sm text-ink/60">(your photo here)</figcaption>
+        </figure>
+
+        <div class="reveal text-center">
+          <h3 class="inline-block border-[1.5px] border-ink bg-paper px-3 py-0.5 text-xl font-medium">what's up</h3>
+          <p class="mx-auto mt-6 max-w-xl font-hand text-xl leading-[32px] sm:text-[22px]">
+            I'm a project manager who gets a little too excited about turning chaos into a clear plan. ✨ I care about honest timelines, the risks everyone forgets, and teams that leave every sprint feeling <u class="decoration-tomato decoration-wavy underline-offset-4">proud</u>, not burnt out. 🎯
+          </p>
+
+          <div class="mx-auto mt-10 flex max-w-lg flex-wrap justify-center gap-2.5">
+            <span class="zig wiggle bg-sun px-5 py-2 font-semibold">Agile &amp; Scrum</span>
+            <span class="zig wiggle grid w-11 place-items-center bg-sun">⚡</span>
+            <span class="zig wiggle bg-leaf px-5 py-2 font-semibold text-white">Roadmapping</span>
+            <span class="zig wiggle grid w-11 place-items-center bg-leaf">🗺️</span>
+            <span class="zig wiggle bg-bubble px-5 py-2 font-semibold text-white">Stakeholders</span>
+            <span class="zig wiggle grid w-11 place-items-center bg-bubble">🤝</span>
+            <span class="zig wiggle bg-cobalt px-5 py-2 font-semibold text-white">Risk &amp; Budget</span>
+            <span class="zig wiggle grid w-11 place-items-center bg-cobalt">👀</span>
+          </div>
+        </div>
+
+        <!-- polaroid right -->
+        <figure class="reveal relative mx-auto w-44 rotate-[3deg] bg-white p-2.5 pb-8 shadow-xl transition hover:rotate-0">
+          <span class="tape absolute -left-4 -top-2 h-5 w-16 rotate-[-30deg]"></span>
+          <span class="tape-y absolute -right-4 -top-2 h-5 w-16 rotate-[30deg]"></span>
+          <div class="relative aspect-[4/5] overflow-hidden bg-[#2c2b2a] p-3">
+            <div class="grid h-full grid-cols-3 gap-1.5">
+              <div class="space-y-1.5"><div class="h-4 rounded-sm bg-sun"></div><div class="h-6 rounded-sm bg-sun/70"></div><div class="h-3 rounded-sm bg-sun/50"></div></div>
+              <div class="space-y-1.5"><div class="h-6 rounded-sm bg-bubble"></div><div class="h-4 rounded-sm bg-bubble/60"></div></div>
+              <div class="space-y-1.5"><div class="h-3 rounded-sm bg-leaf"></div><div class="h-5 rounded-sm bg-leaf/70"></div><div class="h-4 rounded-sm bg-leaf/50"></div><div class="h-3 rounded-sm bg-leaf/40"></div></div>
+            </div>
+          </div>
+          <figcaption class="mt-2 text-center font-hand text-sm text-ink/60">my happy place (a kanban)</figcaption>
+        </figure>
+      </div>
+
+      <!-- stats as sticky notes -->
+      <div class="mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-5 md:grid-cols-4">
+        <div class="reveal rotate-[-2deg] bg-sun p-5 shadow-[0_10px_20px_-8px_rgba(0,0,0,.35)] transition hover:rotate-0 hover:scale-105">
+          <p class="font-pixel text-4xl"><span class="count" data-to="7">0</span>+</p>
+          <p class="mt-1 font-hand text-lg leading-tight">years keeping projects on the rails</p>
+        </div>
+        <div class="reveal rotate-[2deg] bg-mint p-5 shadow-[0_10px_20px_-8px_rgba(0,0,0,.35)] transition hover:rotate-0 hover:scale-105">
+          <p class="font-pixel text-4xl"><span class="count" data-to="50">0</span>+</p>
+          <p class="mt-1 font-hand text-lg leading-tight">projects delivered end-to-end</p>
+        </div>
+        <div class="reveal rotate-[-1deg] bg-[#f8c6d9] p-5 shadow-[0_10px_20px_-8px_rgba(0,0,0,.35)] transition hover:rotate-0 hover:scale-105">
+          <p class="font-pixel text-4xl"><span class="count" data-to="96">0</span>%</p>
+          <p class="mt-1 font-hand text-lg leading-tight">milestones hit on time</p>
+        </div>
+        <div class="reveal rotate-[3deg] bg-[#c9d4fb] p-5 shadow-[0_10px_20px_-8px_rgba(0,0,0,.35)] transition hover:rotate-0 hover:scale-105">
+          <p class="font-pixel text-4xl"><span class="count" data-to="30">0</span>+</p>
+          <p class="mt-1 font-hand text-lg leading-tight">people led across teams</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECTS ============ -->
+    <section id="work" class="px-4 pb-24 sm:px-8">
+      <div class="mb-10 flex items-end justify-between">
+        <div>
+          <p class="font-hand text-lg">stuff i shipped</p>
+          <h3 class="text-4xl font-bold tracking-tight sm:text-5xl">Selected projects</h3>
+        </div>
+        <p class="hidden max-w-xs text-right font-hand text-lg text-ink/60 sm:block">scroll — the folders stack up like my old notebooks ↓</p>
+      </div>
+
+      <div class="space-y-10">
+        <!-- card 1 -->
+        <article class="stack-card group" style="top: 84px">
+          <div class="flex">
+            <span class="relative z-10 bg-cobalt px-5 py-2 font-mono text-[10px] font-bold uppercase tracking-[.2em] text-white [clip-path:polygon(0_0,85%_0,100%_100%,0_100%)] pr-10">✦ Project 01</span>
+          </div>
+          <div class="grid overflow-hidden bg-ink text-paper shadow-2xl transition duration-500 group-hover:-translate-y-1 md:grid-cols-2">
+            <div class="flex flex-col justify-center p-7 sm:p-10">
+              <p class="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[.2em]"><span class="h-1.5 w-1.5 rounded-full bg-paper"></span>Mar 2026 · Fintech</p>
+              <h4 class="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Atlas Launch</h4>
+              <p class="mt-3 max-w-sm text-paper/70">Coordinated 4 squads and 2 vendors to launch a mobile banking app in 11 countries — two weeks ahead of the regulator deadline.</p>
+              <ul class="mt-5 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-wider text-paper/80">
+                <li class="border border-paper/30 px-2 py-1">Scrum of Scrums</li><li class="border border-paper/30 px-2 py-1">$1.2M budget</li><li class="border border-paper/30 px-2 py-1">-18% cycle time</li>
+              </ul>
+              <a href="#" class="mt-7 inline-flex w-fit items-center gap-2 border-b border-paper pb-0.5 font-mono text-[11px] font-bold uppercase tracking-wider">View project <span class="transition group-hover:translate-x-1 group-hover:-translate-y-1">↗</span></a>
+            </div>
+            <div class="relative min-h-[260px] bg-gradient-to-br from-[#1f2a1b] to-[#0f0f0f] p-8">
+              <span class="tape absolute left-6 top-3 z-10 h-5 w-20 rotate-[-6deg]"></span>
+              <div class="h-full rounded-md border border-white/10 bg-white/5 p-4 backdrop-blur transition duration-500 group-hover:rotate-[-1deg] group-hover:scale-[1.02]">
+                <p class="font-mono text-[10px] uppercase tracking-widest text-white/50">Release timeline</p>
+                <div class="mt-4 space-y-3 text-[11px]">
+                  <div class="flex items-center gap-3"><span class="w-16 text-white/60">Discovery</span><div class="h-3 flex-1 rounded-full bg-white/10"><div class="h-3 w-[30%] rounded-full bg-sun"></div></div></div>
+                  <div class="flex items-center gap-3"><span class="w-16 text-white/60">Build</span><div class="h-3 flex-1 rounded-full bg-white/10"><div class="ml-[20%] h-3 w-[55%] rounded-full bg-leaf"></div></div></div>
+                  <div class="flex items-center gap-3"><span class="w-16 text-white/60">QA</span><div class="h-3 flex-1 rounded-full bg-white/10"><div class="ml-[60%] h-3 w-[25%] rounded-full bg-bubble"></div></div></div>
+                  <div class="flex items-center gap-3"><span class="w-16 text-white/60">Launch</span><div class="h-3 flex-1 rounded-full bg-white/10"><div class="ml-[82%] h-3 w-[12%] rounded-full bg-cobalt"></div></div></div>
+                </div>
+                <div class="mt-6 flex items-end justify-between">
+                  <div><p class="text-3xl font-semibold">11</p><p class="text-[10px] uppercase tracking-wider text-white/50">countries</p></div>
+                  <span class="rounded-full bg-leaf/20 px-2 py-1 text-[10px] font-bold uppercase text-leaf">● Shipped early</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- card 2 -->
+        <article class="stack-card group" style="top: 104px">
+          <div class="flex">
+            <span class="relative z-10 bg-sun px-5 py-2 pr-10 font-mono text-[10px] font-bold uppercase tracking-[.2em] [clip-path:polygon(0_0,85%_0,100%_100%,0_100%)]">✦ Project 02</span>
+          </div>
+          <div class="grid overflow-hidden bg-sun shadow-2xl transition duration-500 group-hover:-translate-y-1 md:grid-cols-2">
+            <div class="flex flex-col justify-center p-7 sm:p-10">
+              <p class="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[.2em]"><span class="h-1.5 w-1.5 rounded-full bg-ink"></span>Jan 2026 · SaaS</p>
+              <h4 class="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Forge Onboarding</h4>
+              <p class="mt-3 max-w-sm text-ink/70">Rebuilt the engineering onboarding program: new hires now ship their first PR in 3 days instead of 3 weeks.</p>
+              <ul class="mt-5 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-wider">
+                <li class="border border-ink/40 px-2 py-1">Process design</li><li class="border border-ink/40 px-2 py-1">7× faster ramp-up</li><li class="border border-ink/40 px-2 py-1">eNPS +32</li>
+              </ul>
+              <a href="#" class="mt-7 inline-flex w-fit items-center gap-2 border-b border-ink pb-0.5 font-mono text-[11px] font-bold uppercase tracking-wider">View project <span class="transition group-hover:translate-x-1 group-hover:-translate-y-1">↗</span></a>
+            </div>
+            <div class="relative min-h-[260px] p-8">
+              <span class="tape absolute right-8 top-3 z-10 h-5 w-20 rotate-[8deg]"></span>
+              <div class="grid h-full grid-cols-3 gap-3 rounded-md bg-white p-4 shadow-lg transition duration-500 group-hover:rotate-[1deg] group-hover:scale-[1.02]">
+                <div><p class="mb-2 font-mono text-[9px] font-bold uppercase text-ink/50">Day 1</p><div class="space-y-2"><div class="rounded bg-mint p-2 text-[10px] font-medium">Laptop + access</div><div class="rounded bg-mint p-2 text-[10px] font-medium">Buddy intro</div></div></div>
+                <div><p class="mb-2 font-mono text-[9px] font-bold uppercase text-ink/50">Day 2</p><div class="space-y-2"><div class="rounded bg-[#f8c6d9] p-2 text-[10px] font-medium">Codebase tour</div><div class="rounded bg-[#f8c6d9] p-2 text-[10px] font-medium">Starter ticket</div></div></div>
+                <div><p class="mb-2 font-mono text-[9px] font-bold uppercase text-ink/50">Day 3</p><div class="space-y-2"><div class="rounded bg-[#c9d4fb] p-2 text-[10px] font-medium">First PR 🎉</div></div></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- card 3 -->
+        <article class="stack-card group" style="top: 124px">
+          <div class="flex">
+            <span class="relative z-10 bg-bubble px-5 py-2 pr-10 font-mono text-[10px] font-bold uppercase tracking-[.2em] text-white [clip-path:polygon(0_0,85%_0,100%_100%,0_100%)]">✦ Project 03</span>
+          </div>
+          <div class="grid overflow-hidden bg-white shadow-2xl ring-1 ring-ink/10 transition duration-500 group-hover:-translate-y-1 md:grid-cols-2">
+            <div class="flex flex-col justify-center p-7 sm:p-10">
+              <p class="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[.2em]"><span class="h-1.5 w-1.5 rounded-full bg-bubble"></span>Sep 2025 · Retail</p>
+              <h4 class="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Harbor Migration</h4>
+              <p class="mt-3 max-w-sm text-ink/70">Led a zero-downtime move of 40+ legacy services to the cloud, with a risk register that caught 3 launch-blocking issues early.</p>
+              <ul class="mt-5 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-wider">
+                <li class="border border-ink/30 px-2 py-1">Risk management</li><li class="border border-ink/30 px-2 py-1">0 min downtime</li><li class="border border-ink/30 px-2 py-1">-35% infra cost</li>
+              </ul>
+              <a href="#" class="mt-7 inline-flex w-fit items-center gap-2 border-b border-ink pb-0.5 font-mono text-[11px] font-bold uppercase tracking-wider">View project <span class="transition group-hover:translate-x-1 group-hover:-translate-y-1">↗</span></a>
+            </div>
+            <div class="relative grid min-h-[260px] place-items-center bg-[#fde8f0] p-8">
+              <div class="relative grid h-44 w-44 place-items-center rounded-full bg-white shadow-lg transition duration-700 group-hover:rotate-[20deg]">
+                <svg viewBox="0 0 36 36" class="absolute inset-0 h-full w-full -rotate-90"><circle cx="18" cy="18" r="15.9" fill="none" stroke="#f8c6d9" stroke-width="3"/><circle cx="18" cy="18" r="15.9" fill="none" stroke="#f2508f" stroke-width="3" stroke-dasharray="100 100" stroke-linecap="round"/></svg>
+                <div class="text-center"><p class="font-pixel text-3xl">40/40</p><p class="font-hand text-ink/60">services moved</p></div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="relative border-t border-ink/10 px-4 py-24 text-center sm:px-6">
+      <p class="font-hand text-lg">psst… got a project?</p>
+      <h3 class="reveal mx-auto mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
+        Let's make your next launch
+        <span class="relative inline-block">
+          <span class="relative z-10">boring</span>
+          <svg class="absolute -bottom-2 left-0 w-full text-tomato" viewBox="0 0 200 12" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M3 8c40-6 80-6 120-2s50 3 74-2"/></svg>
+        </span>.
+      </h3>
+      <p class="mx-auto mt-4 max-w-md font-hand text-xl text-ink/70">(boring = on time, on budget, zero 2am fire drills)</p>
+
+      <a href="mailto:hello@shorekakhidze.com" class="reveal mt-10 inline-block rotate-[-1deg] border-2 border-ink bg-white px-6 py-4 font-mono text-sm font-bold shadow-[6px_6px_0_#1c1a19] transition hover:rotate-0 hover:bg-sun sm:text-lg">hello@shorekakhidze.com ✉</a>
+
+      <div class="mt-12 flex flex-wrap justify-center gap-4">
+        <a href="#" class="group flex items-center gap-3 rotate-[-2deg] bg-sun px-5 py-3 font-semibold shadow-md transition hover:rotate-0 hover:-translate-y-1">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.7 4.8 6.1V21h-4v-5.5c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21h-4V9Z"/></svg>LinkedIn
+        </a>
+        <a href="#" class="group flex items-center gap-3 rotate-[2deg] bg-bubble px-5 py-3 font-semibold text-white shadow-md transition hover:rotate-0 hover:-translate-y-1">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram
+        </a>
+        <a href="#" class="group flex items-center gap-3 rotate-[-1deg] bg-leaf px-5 py-3 font-semibold text-white shadow-md transition hover:rotate-0 hover:-translate-y-1">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 5 5.7V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.3-1.6Z"/></svg>TikTok
+        </a>
+      </div>
+    </section>
+
+    <footer class="flex flex-col items-center justify-between gap-2 border-t border-ink/10 px-6 py-6 font-mono text-[10px] uppercase tracking-widest text-ink/60 sm:flex-row">
+      <p>© <span id="year"></span> Shore Kakhidze</p>
+      <p class="font-hand text-sm normal-case tracking-normal">planned with ♥ and way too many sticky notes</p>
+      <a href="#home" class="hover:text-ink">Back to top ↑</a>
+    </footer>
+  </div>
+
+  <script>
+    // mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden') === false;
+      menuBtn.setAttribute('aria-expanded', open);
+    });
+    document.querySelectorAll('.mlink').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+    // nav shadow + active section
+    const nav = document.getElementById('nav');
+    addEventListener('scroll', () => nav.classList.toggle('shadow-md', scrollY > 10), { passive: true });
+    const links = document.querySelectorAll('.navlink');
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) links.forEach(l => l.classList.toggle('bg-sun', l.dataset.sec === e.target.id));
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    ['home', 'about', 'work', 'contact'].forEach(id => spy.observe(document.getElementById(id)));
+
+    // reveal + counters
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        e.target.querySelectorAll('.count').forEach(c => {
+          const to = +c.dataset.to, t0 = performance.now();
+          const step = t => { const p = Math.min((t - t0) / 1200, 1); c.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+          requestAnimationFrame(step);
+        });
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

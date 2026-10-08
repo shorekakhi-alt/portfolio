@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shore Kakhidze — Project Manager</title>
+  <meta name="description" content="Shore Kakhidze — Project Manager. Projects delivered on time, on scope, on purpose." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: { night: '#09090b', lime: '#d4ff3f', haze: '#a1a1aa' },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-padding-top: 96px; }
+    body { background: #09090b; }
+    .grain::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: .06;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .grid-bg {
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
+    }
+    /* cursor spotlight on cards */
+    .spot { position: relative; isolation: isolate; }
+    .spot::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -1; opacity: 0; transition: opacity .4s;
+      background: radial-gradient(500px circle at var(--x, 50%) var(--y, 50%), rgba(212,255,63,.12), transparent 40%);
+    }
+    .spot:hover::before { opacity: 1; }
+    .spot::after {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0; transition: opacity .4s;
+      background: radial-gradient(400px circle at var(--x, 50%) var(--y, 50%), rgba(212,255,63,.6), transparent 40%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+    }
+    .spot:hover::after { opacity: 1; }
+    .marquee { animation: marquee 30s linear infinite; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    .reveal { opacity: 0; transform: translateY(30px); filter: blur(6px); transition: all .9s cubic-bezier(.2,.7,.2,1); }
+    .reveal.in { opacity: 1; transform: none; filter: none; }
+    .glow { animation: glow 8s ease-in-out infinite alternate; }
+    @keyframes glow { from { transform: translate(-10%, -5%) scale(1); } to { transform: translate(10%, 5%) scale(1.15); } }
+    .draw { stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw 2.5s ease forwards .6s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; filter: none; }
+      .draw { stroke-dashoffset: 0; }
+    }
+  </style>
+</head>
+<body class="grain font-sans text-zinc-100 antialiased selection:bg-lime selection:text-night">
+
+  <!-- ============ NAVBAR (floating pill) ============ -->
+  <header class="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
+    <nav class="flex w-full max-w-3xl items-center justify-between rounded-full border border-white/10 bg-zinc-900/60 py-2 pl-5 pr-2 shadow-2xl shadow-black/40 backdrop-blur-xl">
+      <a href="#home" class="flex items-center gap-2 text-sm font-semibold tracking-tight">
+        <span class="grid h-7 w-7 place-items-center rounded-full bg-lime font-serif text-base italic text-night">S</span>
+        <span class="hidden sm:inline">Shore Kakhidze</span>
+      </a>
+      <ul id="navlinks" class="relative hidden items-center text-sm text-haze md:flex">
+        <span id="pill" class="absolute top-0 h-full rounded-full bg-white/10 transition-all duration-300" style="width:0;left:0"></span>
+        <li><a href="#home" data-sec="home" class="navlink relative block px-4 py-2 transition hover:text-white">Home</a></li>
+        <li><a href="#about" data-sec="about" class="navlink relative block px-4 py-2 transition hover:text-white">About</a></li>
+        <li><a href="#work" data-sec="work" class="navlink relative block px-4 py-2 transition hover:text-white">Work</a></li>
+        <li><a href="#contact" data-sec="contact" class="navlink relative block px-4 py-2 transition hover:text-white">Contact</a></li>
+      </ul>
+      <div class="flex items-center gap-2">
+        <a href="#contact" class="rounded-full bg-lime px-4 py-2 text-sm font-semibold text-night transition hover:scale-105">Let's talk</a>
+        <button id="menuBtn" class="grid h-9 w-9 place-items-center rounded-full border border-white/10 md:hidden" aria-label="Open menu" aria-expanded="false">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h16M4 16h16"/></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+  <div id="mobileMenu" class="fixed inset-x-4 top-20 z-40 hidden rounded-3xl border border-white/10 bg-zinc-900/95 p-3 backdrop-blur-xl md:hidden">
+    <a href="#home" class="mlink block rounded-2xl px-4 py-3 text-lg hover:bg-white/5">Home</a>
+    <a href="#about" class="mlink block rounded-2xl px-4 py-3 text-lg hover:bg-white/5">About</a>
+    <a href="#work" class="mlink block rounded-2xl px-4 py-3 text-lg hover:bg-white/5">Work</a>
+    <a href="#contact" class="mlink block rounded-2xl px-4 py-3 text-lg hover:bg-white/5">Contact</a>
+  </div>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section id="home" class="relative overflow-hidden pb-20 pt-36 sm:pt-44">
+      <div class="grid-bg pointer-events-none absolute inset-0"></div>
+      <div class="glow pointer-events-none absolute left-1/2 top-10 h-[480px] w-[680px] -translate-x-1/2 rounded-full bg-lime/20 blur-[120px]"></div>
+
+      <div class="relative mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-[1.25fr_1fr]">
+        <div>
+          <div class="reveal inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-haze">
+            <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime opacity-70"></span><span class="relative h-2 w-2 rounded-full bg-lime"></span></span>
+            Available for new projects — Q1 2027
+          </div>
+          <h1 class="reveal mt-7 text-5xl font-medium leading-[1.02] tracking-tight sm:text-7xl" style="transition-delay:.1s">
+            Projects, <span class="font-serif font-normal italic text-lime">delivered.</span><br />
+            On time, on scope, <span class="font-serif font-normal italic">on purpose.</span>
+          </h1>
+          <p class="reveal mt-6 max-w-lg text-lg leading-relaxed text-haze" style="transition-delay:.2s">
+            I'm <span class="text-white">Shore Kakhidze</span>, a Project Manager who turns ambitious ideas into calm, predictable delivery — aligning teams, taming scope and keeping stakeholders genuinely in the loop.
+          </p>
+          <div class="reveal mt-9 flex flex-wrap items-center gap-3" style="transition-delay:.3s">
+            <a href="#work" class="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-night transition hover:bg-lime">
+              View my work
+              <svg class="h-4 w-4 transition group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#contact" class="rounded-full border border-white/15 px-6 py-3 text-sm font-medium transition hover:border-white/40 hover:bg-white/5">Get in touch</a>
+          </div>
+        </div>
+
+        <!-- status widget -->
+        <div class="reveal relative" style="transition-delay:.35s">
+          <div class="absolute -inset-px rounded-3xl bg-gradient-to-b from-white/20 to-transparent"></div>
+          <div class="relative rounded-3xl bg-zinc-900/90 p-6 backdrop-blur">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-mono text-[11px] uppercase tracking-widest text-haze">Sprint 14 · Live</p>
+                <p class="mt-1 text-lg font-medium">Platform Relaunch</p>
+              </div>
+              <span class="rounded-full bg-lime/10 px-2.5 py-1 text-xs font-medium text-lime">On track</span>
+            </div>
+            <svg viewBox="0 0 300 110" class="mt-6 w-full">
+              <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d4ff3f" stop-opacity=".35"/><stop offset="1" stop-color="#d4ff3f" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0 10 L300 100" stroke="rgba(255,255,255,.15)" stroke-dasharray="4 4" fill="none"/>
+              <path d="M0 10 L40 22 L80 30 L120 46 L160 52 L200 70 L240 82 L300 96 L300 110 L0 110Z" fill="url(#g)"/>
+              <path class="draw" d="M0 10 L40 22 L80 30 L120 46 L160 52 L200 70 L240 82 L300 96" stroke="#d4ff3f" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p class="mt-1 text-right font-mono text-[10px] text-haze">burndown vs. ideal</p>
+            <div class="mt-5 space-y-3 text-sm">
+              <div><div class="flex justify-between text-haze"><span>Scope complete</span><span class="text-white">78%</span></div><div class="mt-1.5 h-1.5 rounded-full bg-white/10"><div class="h-full w-[78%] rounded-full bg-lime"></div></div></div>
+              <div><div class="flex justify-between text-haze"><span>Budget used</span><span class="text-white">64%</span></div><div class="mt-1.5 h-1.5 rounded-full bg-white/10"><div class="h-full w-[64%] rounded-full bg-white/70"></div></div></div>
+            </div>
+            <div class="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="flex -space-x-2">
+                <span class="grid h-8 w-8 place-items-center rounded-full bg-violet-400 text-xs font-bold text-night ring-2 ring-zinc-900">AN</span>
+                <span class="grid h-8 w-8 place-items-center rounded-full bg-sky-400 text-xs font-bold text-night ring-2 ring-zinc-900">LM</span>
+                <span class="grid h-8 w-8 place-items-center rounded-full bg-amber-300 text-xs font-bold text-night ring-2 ring-zinc-900">GT</span>
+                <span class="grid h-8 w-8 place-items-center rounded-full bg-zinc-700 text-xs ring-2 ring-zinc-900">+9</span>
+              </div>
+              <p class="text-xs text-haze">0 blockers · 2 risks watched</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- marquee -->
+      <div class="relative mt-24 overflow-hidden border-y border-white/10 py-5 [mask-image:linear-gradient(90deg,transparent,#000_15%,#000_85%,transparent)]">
+        <div class="marquee flex w-max gap-12 whitespace-nowrap font-serif text-3xl italic text-zinc-500">
+          <span>Agile</span><span class="text-lime">✦</span><span>Scrum</span><span class="text-lime">✦</span><span>Roadmapping</span><span class="text-lime">✦</span><span>Stakeholder Management</span><span class="text-lime">✦</span><span>Risk Mitigation</span><span class="text-lime">✦</span><span>Budgeting</span><span class="text-lime">✦</span><span>Jira</span><span class="text-lime">✦</span><span>Notion</span><span class="text-lime">✦</span><span>OKRs</span><span class="text-lime">✦</span>
+          <span>Agile</span><span class="text-lime">✦</span><span>Scrum</span><span class="text-lime">✦</span><span>Roadmapping</span><span class="text-lime">✦</span><span>Stakeholder Management</span><span class="text-lime">✦</span><span>Risk Mitigation</span><span class="text-lime">✦</span><span>Budgeting</span><span class="text-lime">✦</span><span>Jira</span><span class="text-lime">✦</span><span>Notion</span><span class="text-lime">✦</span><span>OKRs</span><span class="text-lime">✦</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT (bento) ============ -->
+    <section id="about" class="mx-auto max-w-6xl px-5 py-24">
+      <div class="reveal mb-12 flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="font-mono text-xs uppercase tracking-[.25em] text-lime">01 — About</p>
+          <h2 class="mt-3 text-4xl font-medium tracking-tight sm:text-5xl">Calm in the <span class="font-serif italic">chaos.</span></h2>
+        </div>
+        <p class="max-w-sm text-haze">The numbers behind the work — and the person keeping the board green.</p>
+      </div>
+
+      <div class="grid auto-rows-[minmax(160px,auto)] gap-4 md:grid-cols-4">
+        <div class="spot reveal rounded-3xl border border-white/10 bg-zinc-900/60 p-8 md:col-span-2 md:row-span-2">
+          <div class="grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-lime to-emerald-400 font-serif text-3xl italic text-night">SK</div>
+          <h3 class="mt-8 text-2xl font-medium">Hi, I'm Shore.</h3>
+          <p class="mt-4 leading-relaxed text-haze">I've spent the last several years leading cross-functional teams through product launches, platform migrations and process overhauls. My job is to make complex work feel simple: clear priorities, honest timelines, and the right people in the right conversations.</p>
+          <p class="mt-4 leading-relaxed text-haze">Outside of Gantt charts, you'll find me making short videos about productivity and team culture.</p>
+          <div class="mt-8 flex flex-wrap gap-2 text-xs">
+            <span class="rounded-full border border-white/10 px-3 py-1.5 text-zinc-300">PMP®</span>
+            <span class="rounded-full border border-white/10 px-3 py-1.5 text-zinc-300">Certified ScrumMaster</span>
+            <span class="rounded-full border border-white/10 px-3 py-1.5 text-zinc-300">PRINCE2</span>
+          </div>
+        </div>
+
+        <div class="spot reveal flex flex-col justify-between rounded-3xl border border-white/10 bg-zinc-900/60 p-6">
+          <p class="text-sm text-haze">Years of experience</p>
+          <p class="text-6xl font-medium tracking-tight"><span class="count" data-to="7">0</span><span class="text-lime">+</span></p>
+        </div>
+        <div class="spot reveal flex flex-col justify-between rounded-3xl border border-white/10 bg-zinc-900/60 p-6">
+          <p class="text-sm text-haze">Projects delivered</p>
+          <p class="text-6xl font-medium tracking-tight"><span class="count" data-to="50">0</span><span class="text-lime">+</span></p>
+        </div>
+        <div class="spot reveal flex flex-col justify-between rounded-3xl bg-lime p-6 text-night">
+          <p class="text-sm font-medium text-night/70">On-time delivery rate</p>
+          <p class="text-6xl font-medium tracking-tight"><span class="count" data-to="96">0</span>%</p>
+        </div>
+        <div class="spot reveal flex flex-col justify-between rounded-3xl border border-white/10 bg-zinc-900/60 p-6">
+          <p class="text-sm text-haze">Budget managed</p>
+          <p class="text-6xl font-medium tracking-tight">$<span class="count" data-to="12">0</span>M</p>
+        </div>
+
+        <div class="spot reveal rounded-3xl border border-white/10 bg-zinc-900/60 p-6 md:col-span-4">
+          <p class="font-mono text-xs uppercase tracking-[.2em] text-haze">How I work</p>
+          <ol class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <li class="group"><span class="font-serif text-3xl italic text-lime">01</span><h4 class="mt-2 font-medium">Discover</h4><p class="mt-1 text-sm text-haze">Goals, constraints and the people who'll judge success.</p></li>
+            <li class="group"><span class="font-serif text-3xl italic text-lime">02</span><h4 class="mt-2 font-medium">Plan</h4><p class="mt-1 text-sm text-haze">Roadmap, risks and a timeline everyone actually believes.</p></li>
+            <li class="group"><span class="font-serif text-3xl italic text-lime">03</span><h4 class="mt-2 font-medium">Execute</h4><p class="mt-1 text-sm text-haze">Tight rituals, visible progress, blockers cleared fast.</p></li>
+            <li class="group"><span class="font-serif text-3xl italic text-lime">04</span><h4 class="mt-2 font-medium">Deliver</h4><p class="mt-1 text-sm text-haze">Launch, measure, retro — and make the next one better.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section id="work" class="mx-auto max-w-6xl px-5 py-24">
+      <div class="reveal mb-12 flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="font-mono text-xs uppercase tracking-[.25em] text-lime">02 — Selected work</p>
+          <h2 class="mt-3 text-4xl font-medium tracking-tight sm:text-5xl">Projects I've <span class="font-serif italic">steered.</span></h2>
+        </div>
+        <div id="filters" class="flex flex-wrap gap-2 text-sm">
+          <button data-f="all" class="filter rounded-full bg-white px-4 py-1.5 font-medium text-night">All</button>
+          <button data-f="product" class="filter rounded-full border border-white/10 px-4 py-1.5 text-haze transition hover:text-white">Product</button>
+          <button data-f="ops" class="filter rounded-full border border-white/10 px-4 py-1.5 text-haze transition hover:text-white">Operations</button>
+          <button data-f="tech" class="filter rounded-full border border-white/10 px-4 py-1.5 text-haze transition hover:text-white">Tech</button>
+        </div>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-2">
+        <!-- p1 -->
+        <a href="#" data-cat="product" class="proj spot reveal group block overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60 md:col-span-2">
+          <div class="grid md:grid-cols-2">
+            <div class="relative h-64 overflow-hidden md:h-auto">
+              <div class="absolute inset-0 bg-gradient-to-br from-violet-600 via-fuchsia-500 to-orange-400 transition duration-700 group-hover:scale-110"></div>
+              <div class="absolute inset-0 grid place-items-center">
+                <div class="w-56 rounded-2xl bg-night/80 p-4 shadow-2xl backdrop-blur transition duration-700 group-hover:-rotate-3 group-hover:scale-105">
+                  <p class="text-[10px] uppercase tracking-widest text-haze">Launch countdown</p>
+                  <p class="mt-1 text-3xl font-semibold">T-14 days</p>
+                  <div class="mt-3 grid grid-cols-7 gap-1">
+                    <span class="h-6 rounded bg-lime"></span><span class="h-6 rounded bg-lime"></span><span class="h-6 rounded bg-lime"></span><span class="h-6 rounded bg-lime"></span><span class="h-6 rounded bg-lime/50"></span><span class="h-6 rounded bg-white/10"></span><span class="h-6 rounded bg-white/10"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col justify-between gap-10 p-8 sm:p-10">
+              <div class="flex items-start justify-between">
+                <span class="font-mono text-xs text-haze">2026 · Fintech</span>
+                <span class="grid h-11 w-11 place-items-center rounded-full border border-white/15 transition duration-500 group-hover:rotate-45 group-hover:border-lime group-hover:bg-lime group-hover:text-night">↗</span>
+              </div>
+              <div>
+                <h3 class="text-3xl font-medium tracking-tight sm:text-4xl">Atlas — Mobile Banking Launch</h3>
+                <p class="mt-3 max-w-md text-haze">Led 4 squads and 2 vendors to launch in 11 countries, two weeks ahead of the regulatory deadline.</p>
+                <div class="mt-6 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
+                  <div><p class="text-2xl font-medium">11</p><p class="text-xs text-haze">markets</p></div>
+                  <div><p class="text-2xl font-medium">-18%</p><p class="text-xs text-haze">cycle time</p></div>
+                  <div><p class="text-2xl font-medium">2 wks</p><p class="text-xs text-haze">early</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- p2 -->
+        <a href="#" data-cat="ops" class="proj spot reveal group block overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60">
+          <div class="relative h-56 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-cyan-600 transition duration-700 group-hover:scale-110"></div>
+            <div class="absolute inset-0 flex items-end gap-2 p-8">
+              <span class="w-full rounded-t-lg bg-white/30 transition-all duration-700" style="height:30%"></span>
+              <span class="w-full rounded-t-lg bg-white/40 transition-all duration-700 group-hover:h-[55%]" style="height:45%"></span>
+              <span class="w-full rounded-t-lg bg-white/50 transition-all duration-700 group-hover:h-[75%]" style="height:55%"></span>
+              <span class="w-full rounded-t-lg bg-white/70 transition-all duration-700 group-hover:h-[95%]" style="height:70%"></span>
+            </div>
+          </div>
+          <div class="p-8">
+            <div class="flex items-center justify-between"><span class="font-mono text-xs text-haze">2026 · SaaS</span><span class="grid h-10 w-10 place-items-center rounded-full border border-white/15 transition duration-500 group-hover:rotate-45 group-hover:border-lime group-hover:bg-lime group-hover:text-night">↗</span></div>
+            <h3 class="mt-5 text-2xl font-medium tracking-tight">Forge — Engineering Onboarding</h3>
+            <p class="mt-2 text-haze">First PR in 3 days instead of 3 weeks. 7× faster ramp-up, eNPS +32.</p>
+          </div>
+        </a>
+
+        <!-- p3 -->
+        <a href="#" data-cat="tech" class="proj spot reveal group block overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60">
+          <div class="relative h-56 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-sky-600 to-indigo-800 transition duration-700 group-hover:scale-110"></div>
+            <div class="absolute inset-0 grid place-items-center">
+              <div id="svcGrid" class="grid grid-cols-8 gap-1.5"></div>
+            </div>
+          </div>
+          <div class="p-8">
+            <div class="flex items-center justify-between"><span class="font-mono text-xs text-haze">2025 · Retail</span><span class="grid h-10 w-10 place-items-center rounded-full border border-white/15 transition duration-500 group-hover:rotate-45 group-hover:border-lime group-hover:bg-lime group-hover:text-night">↗</span></div>
+            <h3 class="mt-5 text-2xl font-medium tracking-tight">Harbor — Cloud Migration</h3>
+            <p class="mt-2 text-haze">40+ services moved with zero downtime and 35% lower infrastructure cost.</p>
+          </div>
+        </a>
+
+        <!-- p4 -->
+        <a href="#" data-cat="product" class="proj spot reveal group block overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60">
+          <div class="relative h-56 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-amber-400 to-rose-500 transition duration-700 group-hover:scale-110"></div>
+            <div class="absolute inset-0 grid place-items-center">
+              <div class="flex items-center gap-3">
+                <span class="grid h-16 w-16 place-items-center rounded-full bg-white/90 text-2xl shadow-xl transition duration-500 group-hover:-translate-x-2">📱</span>
+                <span class="h-0.5 w-10 bg-white/70"></span>
+                <span class="grid h-16 w-16 place-items-center rounded-full bg-white/90 text-2xl shadow-xl transition duration-500 group-hover:translate-x-2">🛒</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-8">
+            <div class="flex items-center justify-between"><span class="font-mono text-xs text-haze">2025 · E-commerce</span><span class="grid h-10 w-10 place-items-center rounded-full border border-white/15 transition duration-500 group-hover:rotate-45 group-hover:border-lime group-hover:bg-lime group-hover:text-night">↗</span></div>
+            <h3 class="mt-5 text-2xl font-medium tracking-tight">Pulse — Checkout Redesign</h3>
+            <p class="mt-2 text-haze">Coordinated design, eng and legal for a checkout rebuild that lifted conversion 22%.</p>
+          </div>
+        </a>
+
+        <!-- p5 -->
+        <a href="#" data-cat="ops" class="proj spot reveal group block overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60">
+          <div class="relative h-56 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-zinc-600 to-zinc-900 transition duration-700 group-hover:scale-110"></div>
+            <div class="absolute inset-0 grid place-items-center font-serif text-7xl italic text-white/90 transition duration-700 group-hover:tracking-widest">PMO</div>
+          </div>
+          <div class="p-8">
+            <div class="flex items-center justify-between"><span class="font-mono text-xs text-haze">2024 · Enterprise</span><span class="grid h-10 w-10 place-items-center rounded-full border border-white/15 transition duration-500 group-hover:rotate-45 group-hover:border-lime group-hover:bg-lime group-hover:text-night">↗</span></div>
+            <h3 class="mt-5 text-2xl font-medium tracking-tight">Northstar — PMO Setup</h3>
+            <p class="mt-2 text-haze">Built a portfolio office from scratch: intake, prioritisation and reporting for 25 projects.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="relative overflow-hidden px-5 py-28">
+      <div class="pointer-events-none absolute bottom-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 translate-y-1/2 rounded-full bg-lime/15 blur-[120px]"></div>
+      <div class="reveal relative mx-auto max-w-4xl text-center">
+        <p class="font-mono text-xs uppercase tracking-[.25em] text-lime">03 — Contact</p>
+        <h2 class="mt-5 text-5xl font-medium leading-[1.05] tracking-tight sm:text-7xl">Have a project that<br />needs <span class="font-serif italic text-lime">steering?</span></h2>
+        <p class="mx-auto mt-6 max-w-lg text-lg text-haze">I'm currently taking on new projects and full-time roles. Tell me what you're building.</p>
+
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <a href="mailto:hello@shorekakhidze.com" class="rounded-full bg-white px-7 py-4 text-base font-semibold text-night transition hover:bg-lime">hello@shorekakhidze.com</a>
+          <button id="copyBtn" class="rounded-full border border-white/15 px-5 py-4 text-sm text-haze transition hover:border-white/40 hover:text-white">Copy email</button>
+        </div>
+
+        <div class="mx-auto mt-16 grid max-w-2xl gap-3 sm:grid-cols-3">
+          <a href="#" class="spot group flex items-center justify-between rounded-2xl border border-white/10 bg-zinc-900/60 px-5 py-4 transition hover:-translate-y-1">
+            <span class="flex items-center gap-3"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.7 4.8 6.1V21h-4v-5.5c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21h-4V9Z"/></svg>LinkedIn</span>
+            <span class="text-haze transition group-hover:rotate-45 group-hover:text-lime">↗</span>
+          </a>
+          <a href="#" class="spot group flex items-center justify-between rounded-2xl border border-white/10 bg-zinc-900/60 px-5 py-4 transition hover:-translate-y-1">
+            <span class="flex items-center gap-3"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram</span>
+            <span class="text-haze transition group-hover:rotate-45 group-hover:text-lime">↗</span>
+          </a>
+          <a href="#" class="spot group flex items-center justify-between rounded-2xl border border-white/10 bg-zinc-900/60 px-5 py-4 transition hover:-translate-y-1">
+            <span class="flex items-center gap-3"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 5 5.7V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.3-1.6Z"/></svg>TikTok</span>
+            <span class="text-haze transition group-hover:rotate-45 group-hover:text-lime">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 text-sm text-haze sm:flex-row">
+      <p>© <span id="year"></span> Shore Kakhidze. All rights reserved.</p>
+      <p class="font-serif text-lg italic text-zinc-400">Plan the work. Work the plan.</p>
+      <a href="#home" class="transition hover:text-white">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    // migration grid (40 services)
+    document.getElementById('svcGrid').innerHTML = Array.from({ length: 40 }, (_, i) =>
+      `<span class="h-3 w-3 rounded-sm ${i < 34 ? 'bg-white/80' : 'bg-white/20'} transition duration-500 group-hover:bg-lime" style="transition-delay:${i * 15}ms"></span>`).join('');
+
+    // mobile menu
+    const menuBtn = document.getElementById('menuBtn'), mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => menuBtn.setAttribute('aria-expanded', !mobileMenu.classList.toggle('hidden')));
+    document.querySelectorAll('.mlink').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+    // sliding active pill in nav
+    const pill = document.getElementById('pill'), links = [...document.querySelectorAll('.navlink')];
+    const movePill = el => { pill.style.left = el.offsetLeft + 'px'; pill.style.width = el.offsetWidth + 'px'; };
+    const spy = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(l => { const on = l.dataset.sec === e.target.id; l.classList.toggle('text-white', on); if (on) movePill(l); });
+    }), { rootMargin: '-45% 0px -50% 0px' });
+    ['home', 'about', 'work', 'contact'].forEach(id => spy.observe(document.getElementById(id)));
+
+    // cursor spotlight
+    document.querySelectorAll('.spot').forEach(card => card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--x', e.clientX - r.left + 'px');
+      card.style.setProperty('--y', e.clientY - r.top + 'px');
+    }));
+
+    // reveal + counters
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('.count').forEach(c => {
+        const to = +c.dataset.to, t0 = performance.now();
+        const step = t => { const p = Math.min((t - t0) / 1400, 1); c.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      });
+      io.unobserve(e.target);
+    }), { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // project filters
+    document.querySelectorAll('.filter').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter').forEach(b => { const on = b === btn; b.className = 'filter rounded-full px-4 py-1.5 transition ' + (on ? 'bg-white font-medium text-night' : 'border border-white/10 text-haze hover:text-white'); });
+      document.querySelectorAll('.proj').forEach(p => { p.style.display = btn.dataset.f === 'all' || p.dataset.cat === btn.dataset.f ? '' : 'none'; });
+    }));
+
+    // copy email
+    document.getElementById('copyBtn').addEventListener('click', e => {
+      navigator.clipboard?.writeText('hello@shorekakhidze.com').then(() => { e.target.textContent = 'Copied ✓'; setTimeout(() => e.target.textContent = 'Copy email', 1800); });
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

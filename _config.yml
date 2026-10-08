@@ -1,0 +1,4 @@
+# GitHub Pages: publish the portfolio (index.html + images/), keep drafts and docs off the live site
+exclude:
+  - drafts
+  - README.md

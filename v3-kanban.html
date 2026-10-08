@@ -221,22 +221,22 @@
                 <h3 class="mt-1 text-xl font-bold">Mazda CX-60 PHEV: "That's It"</h3>
                 <p class="mt-1.5 text-sm">Launch campaign for the plug-in hybrid CX-60 in Georgia, starring sumo legend Levan Gorgadze (Tochinoshin). Won Bronze at the Kyiv International Advertising Festival.</p>
                 <div class="mt-3 flex flex-wrap gap-1.5 font-mono text-[10px] font-bold uppercase"><span class="border-2 border-ink bg-mint px-1.5">1.25M unique viewers</span><span class="border-2 border-ink bg-lemon px-1.5">6.16M views</span><span class="border-2 border-ink bg-lilac px-1.5">+24% leads YoY</span><span class="border-2 border-ink bg-white px-1.5">98.3% new reach</span></div>
-                <button type="button" data-open-board class="mt-4 w-full border-[3px] border-ink bg-ink py-2 font-mono text-xs font-bold uppercase text-cream transition hover:bg-tomato">View award board ↗</button>
+                <button type="button" data-open-board="mazda" class="mt-4 w-full border-[3px] border-ink bg-ink py-2 font-mono text-xs font-bold uppercase text-cream transition hover:bg-tomato">View award board ↗</button>
               </div>
             </article>
 
             <article draggable="true" class="card press cursor-grab border-[3px] border-ink bg-white shadow-hard active:cursor-grabbing">
-              <div class="relative h-36 overflow-hidden border-b-[3px] border-ink bg-royal p-4">
-                <div class="flex h-full items-end gap-2">
-                  <span class="w-full border-2 border-ink bg-lemon" style="height:35%"></span><span class="w-full border-2 border-ink bg-lemon" style="height:55%"></span><span class="w-full border-2 border-ink bg-lemon" style="height:70%"></span><span class="w-full border-2 border-ink bg-mint" style="height:95%"></span>
-                </div>
-                <span class="absolute right-3 top-3 border-2 border-ink bg-white px-1.5 font-mono text-[10px] font-bold">FINTECH</span>
+              <div class="relative h-44 overflow-hidden border-b-[3px] border-ink bg-[#e4e6ee]">
+                <img src="images/quick-shortlist-thumb.jpg" alt="Anime-style shiba puppy held up in two hands, from Quick's KIAF-shortlisted campaign" width="800" height="400" class="h-full w-full object-cover" draggable="false" />
+                <span class="absolute bottom-3 left-3 rotate-[-4deg] border-2 border-ink bg-lemon px-2 py-0.5 font-mono text-[10px] font-extrabold uppercase text-ink shadow-hard-sm">★ Shortlist ×5 · KIAF</span>
+                <span class="absolute right-3 top-3 border-2 border-ink bg-white px-1.5 font-mono text-[10px] font-bold">AI · FILM</span>
               </div>
               <div class="p-4">
-                <p class="font-mono text-[11px] font-bold text-ink/50">SK-104 · 2026</p>
-                <h3 class="mt-1 text-xl font-bold">Atlas Mobile Launch</h3>
-                <p class="mt-1.5 text-sm">4 squads, 11 countries, shipped 2 weeks ahead of the regulator deadline.</p>
-                <div class="mt-3 flex flex-wrap gap-1.5 font-mono text-[10px] font-bold uppercase"><span class="border-2 border-ink bg-mint px-1.5">-18% cycle</span><span class="border-2 border-ink bg-lilac px-1.5">$1.2M</span></div>
+                <p class="font-mono text-[11px] font-bold text-ink/50">SK-150 · Quick</p>
+                <h3 class="mt-1 text-xl font-bold">Quick: 5× KIAF Shortlist</h3>
+                <p class="mt-1.5 text-sm">An AI-crafted anime film for Quick, shortlisted in five categories at the Kyiv International Advertising Festival, across creative communications and craft.</p>
+                <div class="mt-3 flex flex-wrap gap-1.5 font-mono text-[10px] font-bold uppercase"><span class="border-2 border-ink bg-mint px-1.5">Creative use of AI</span><span class="border-2 border-ink bg-lemon px-1.5">AI storytelling</span><span class="border-2 border-ink bg-lilac px-1.5">Use of music ×2</span><span class="border-2 border-ink bg-white px-1.5">Culture &amp; local</span></div>
+                <button type="button" data-open-board="quick" class="mt-4 w-full border-[3px] border-ink bg-ink py-2 font-mono text-xs font-bold uppercase text-cream transition hover:bg-tomato">View shortlist ↗</button>
               </div>
             </article>
 
@@ -360,10 +360,14 @@
   </main>
 
   <!-- award board lightbox -->
-  <div id="boardBox" hidden class="fixed inset-0 z-[100] grid place-items-center bg-ink/80 p-4" role="dialog" aria-modal="true" aria-label="Mazda That's It award board">
-    <div class="relative max-h-full w-full max-w-3xl overflow-auto border-[3px] border-ink bg-white shadow-hard-lg">
-      <div class="flex items-center justify-between border-b-[3px] border-ink bg-[#d9894f] px-4 py-2 font-mono text-xs font-bold uppercase"><span>KIAF Bronze · Mazda "That's It"</span><button type="button" data-close-board class="border-2 border-ink bg-white px-2 py-0.5" aria-label="Close">✕</button></div>
+  <div id="boardBox" hidden class="fixed inset-0 z-[100] grid place-items-center bg-ink/80 p-4" role="dialog" aria-modal="true" aria-label="Award board">
+    <div data-board="mazda" hidden class="relative max-h-full w-full max-w-3xl overflow-auto border-[3px] border-ink bg-white shadow-hard-lg">
+      <div class="sticky top-0 flex items-center justify-between border-b-[3px] border-ink bg-[#d9894f] px-4 py-2 font-mono text-xs font-bold uppercase"><span>KIAF Bronze · Mazda "That's It"</span><button type="button" data-close-board class="border-2 border-ink bg-white px-2 py-0.5" aria-label="Close">✕</button></div>
       <img src="images/mazda-thats-it.jpg" alt="KIAF award board for Mazda's That's It campaign: brief, insight, context, idea and impact results" width="1200" height="1200" class="block h-auto w-full" />
+    </div>
+    <div data-board="quick" hidden class="relative max-h-full w-full max-w-xl overflow-auto border-[3px] border-ink bg-white shadow-hard-lg">
+      <div class="sticky top-0 flex items-center justify-between border-b-[3px] border-ink bg-lemon px-4 py-2 font-mono text-xs font-bold uppercase"><span>KIAF Shortlist · 5 categories · Quick</span><button type="button" data-close-board class="border-2 border-ink bg-white px-2 py-0.5" aria-label="Close">✕</button></div>
+      <img src="images/quick-shortlist.jpg" alt="Quick's KIAF shortlist poster listing five categories, with an anime shiba puppy held up in two hands" width="1229" height="1536" class="block h-auto w-full" />
     </div>
   </div>
 
@@ -436,7 +440,10 @@
 
     // award board lightbox
     const boardBox = document.getElementById('boardBox');
-    document.querySelectorAll('[data-open-board]').forEach(b => b.addEventListener('click', () => { boardBox.hidden = false; }));
+    document.querySelectorAll('[data-open-board]').forEach(b => b.addEventListener('click', () => {
+      boardBox.querySelectorAll('[data-board]').forEach(p => { p.hidden = p.dataset.board !== b.dataset.openBoard; });
+      boardBox.hidden = false;
+    }));
     boardBox.addEventListener('click', e => { if (e.target === boardBox || e.target.closest('[data-close-board]')) boardBox.hidden = true; });
     addEventListener('keydown', e => { if (e.key === 'Escape') boardBox.hidden = true; });
 
